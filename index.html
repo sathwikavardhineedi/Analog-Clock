@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Analog Clock with Time Format Toggle</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #34495e;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      flex-direction: column;
+      transition: background-color 0.3s ease;
+      overflow: hidden;
+    }
+
+    .clock-container {
+      text-align: center;
+      position: relative;
+    }
+
+    .clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 10px solid #fff;
+      border-radius: 50%;
+      background-color: #34495e;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 10px rgba(255, 255, 255, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom;
+      transition: transform 1s ease-out;
+    }
+
+    .hour {
+      width: 6px;
+      height: 80px;
+      background-color: #f39c12;
+      box-shadow: 0 0 10px #f39c12;
+    }
+
+    .minute {
+      width: 4px;
+      height: 100px;
+      background-color: #2980b9;
+      box-shadow: 0 0 10px #2980b9;
+    }
+
+    .second {
+      width: 2px;
+      height: 120px;
+      background-color: #e74c3c;
+      box-shadow: 0 0 10px #e74c3c;
+    }
+
+    .center {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #fff;
+      border-radius: 50%;
+      z-index: 10;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    .digital-time {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-top: 10px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    /* Buttons */
+    .button-container {
+      margin-top: 20px;
+    }
+
+    .button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Fade-in effect for digital time */
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    /* Circle Progress Bar */
+    .progress-bar {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border: 5px solid transparent;
+      border-radius: 50%;
+      border-top: 5px solid #3498db;
+      animation: progress 60s infinite linear;
+    }
+
+    @keyframes progress {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="clock-container">
+    <div class="progress-bar"></div>
+    <div class="clock">
+      <div class="hand hour" id="hourHand"></div>
+      <div class="hand minute" id="minuteHand"></div>
+      <div class="hand second" id="secondHand"></div>
+      <div class="center"></div>
+    </div>
+
+    <div class="digital-time" id="digitalTime"></div>
+
+    <div class="button-container">
+      <button class="button" id="toggleFormatBtn">Toggle 24-Hour Format</button>
+    </div>
+  </div>
+
+  <script>
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+    const digitalTime = document.getElementById('digitalTime');
+    const toggleFormatBtn = document.getElementById('toggleFormatBtn');
+
+    let is24HourFormat = false; // 24-hour format flag
+
+    // Function to set clock hands and update digital time
+    function setClock() {
+      const now = new Date();
+      let hour = now.getHours();
+      const minute = now.getMinutes();
+      const second = now.getSeconds();
+
+      // Update Day/Night theme based on time
+      if (hour >= 6 && hour < 18) {
+        document.body.style.backgroundColor = "#ecf0f1"; // Daytime (Light background)
+      } else {
+        document.body.style.backgroundColor = "#34495e"; // Nighttime (Dark background)
+      }
+
+      // Format time based on 12-hour or 24-hour format
+      if (!is24HourFormat && hour > 12) {
+        hour -= 12;
+      }
+
+      // Calculate degrees for each hand
+      const hourDeg = (hour % 12) * 30 + (minute / 60) * 30;
+      const minuteDeg = minute * 6;
+      const secondDeg = second * 6;
+
+      // Apply rotation to the hands with smooth animation
+      hourHand.style.transform = `rotate(${hourDeg}deg)`;
+      minuteHand.style.transform = `rotate(${minuteDeg}deg)`;
+      secondHand.style.transform = `rotate(${secondDeg}deg)`;
+
+      // Update digital time
+      let timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+      digitalTime.textContent = timeString;
+    }
+
+    // Toggle 12-hour and 24-hour format
+    toggleFormatBtn.addEventListener('click', () => {
+      is24HourFormat = !is24HourFormat;
+      toggleFormatBtn.textContent = is24HourFormat ? 'Toggle 12-Hour Format' : 'Toggle 24-Hour Format';
+      setClock(); // Update clock format
+    });
+
+    // Update the clock every second
+    setInterval(setClock, 1000);
+
+    // Initialize the clock on page load
+    setClock();
+  </script>
+</body>
+</html>
