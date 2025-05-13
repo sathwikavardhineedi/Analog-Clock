@@ -31,9 +31,3 @@ This is a beautiful **Analog Clock** built using **HTML, CSS, and JavaScript**. 
 
 1. Clone or download the repository
 2. Open `index.html` in any modern browser
-
----
-
-## 📄 License
-
-This project is open-source and free to use under the [MIT License](LICENSE).
